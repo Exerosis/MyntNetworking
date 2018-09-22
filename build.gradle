@@ -1,18 +1,16 @@
-plugins {
-    id 'kotlin-platform-common' version '1.2.50'
-}
+plugins { id 'kotlin-platform-common' version '1.2.50' }
 
-group 'app.mynt'
-version '1.0.0'
+allprojects {
+    group 'app.mynt'
+    version '1.0.0'
 
-repositories {
-    mavenCentral()
+    repositories {
+        mavenCentral()
+    }
 }
 
 dependencies {
     compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.3'
-    compile 'org.jetbrains.kotlin:kotlin-stdlib-common'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-common"
 }
-kotlin {
-    experimental { coroutines 'enable'}
-}
+

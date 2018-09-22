@@ -17,7 +17,6 @@
             <array />
           </option>
           <option name="multiPlatform" value="true" />
-          <option name="coroutinesState" value="enable" />
         </compilerArguments>
       </configuration>
     </facet>

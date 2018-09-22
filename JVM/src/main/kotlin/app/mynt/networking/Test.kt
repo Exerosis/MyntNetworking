@@ -1,47 +1,43 @@
 package app.mynt.networking
 
-import java.net.SocketAddress
+import app.mynt.networking.nio.TCPSocketProvider
+import kotlinx.coroutines.experimental.launch
+import java.net.InetSocketAddress
 import java.nio.ByteBuffer
-import kotlin.coroutines.experimental.Continuation
+import java.nio.channels.AsynchronousChannelGroup.withThreadPool
+import java.util.concurrent.Executors.newCachedThreadPool
 
 fun main(args: Array<String>) {
+    launch {
+        val provider = TCPSocketProvider(withThreadPool(newCachedThreadPool())) {
+            ByteBuffer.allocate(256).flip() as ByteBuffer
+        }
 
-}
+        val address = InetSocketAddress("localhost", 25565)
+        launch {
+            provider.accept(address).read {
+                val first = byte()
+                println("First: $first")
 
-fun magicRead(buffer: ByteBuffer, callback: (SocketAddress, ByteBuffer, Int) -> Unit) {
+                val second = int()
+                println("Second: $second")
 
-}
+                val third = bytes(4)
+                println("Third: ${String(third)}")
+            }
+        }
 
-class UDPTest(
-        val read: (ByteBuffer, (ByteBuffer, Int) -> Unit) -> Unit
-) : ReadCoordinator {
+        provider.connect(address).write {
+            byte(10.toByte())
+            println("Sent First")
 
+            int(4)
+            println("Sent Second")
 
-    override fun buffer(
-            using: ByteBuffer,
-            buffer: ByteBuffer,
-            amount: Int,
-            continuation: Continuation<ByteBuffer>
-    ): Any {
-        read
+            bytes("test".toByteArray(), 4, 0)
+            println("Sent Third")
+        }
     }
 
-    override fun array(
-            using: ByteBuffer,
-            array: ByteArray,
-            amount: Int,
-            offset: Int,
-            continuation: Continuation<ByteArray>
-    ): Any {
-
-    }
-
-    override fun <Type : Number> number(
-            using: ByteBuffer,
-            amount: Int,
-            reader: (ByteBuffer) -> Type,
-            continuation: Continuation<Type>
-    ): Any {
-
-    }
+    Thread.sleep(10000)
 }
