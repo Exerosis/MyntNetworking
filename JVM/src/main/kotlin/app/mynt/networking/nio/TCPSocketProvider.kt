@@ -27,7 +27,7 @@ class TCPSocketProvider(
 ) : Provider {
     private val servers = HashMap<SocketAddress, AsynchronousServerSocketChannel>()
     private val serverFactory = { address: SocketAddress ->
-        group.provider().openAsynchronousServerSocketChannel(group).bind(address)
+        AsynchronousServerSocketChannel.open(group).bind(address)
     }
 
     private open class Handler(
@@ -82,7 +82,7 @@ class TCPSocketProvider(
     }
 
     override suspend fun connect(address: Address) = continued<Connection> {
-        val channel = group.provider().openAsynchronousSocketChannel(group)
+        val channel = AsynchronousSocketChannel.open(group)
         channel.connect(address, it, ConnectHandler(allocator, channel))
         COROUTINE_SUSPENDED
     }

@@ -1,0 +1,46 @@
+apply plugin: 'kotlin2js'
+apply plugin: 'kotlin-platform-js'
+apply plugin: 'com.moowork.node'
+kotlin.experimental.coroutines 'enable'
+
+dependencies {
+    compile 'org.jetbrains.kotlin:kotlin-stdlib-js'
+    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core-js:0.22.5'
+    expectedBy parent
+}
+
+sourceSets {
+    main.kotlin.srcDirs += "src/bindings/kotlin"
+}
+
+node {
+    distBaseUrl = 'https://nodejs.org/dist'
+    version = '10.11.0'
+    download = true
+    workDir = file("$buildDir/node")
+    nodeModulesDir = project.buildDir
+}
+
+compileKotlin2Js.kotlinOptions {
+    outputFile = "$buildDir/index.js"
+    moduleKind = 'commonjs'
+    sourceMap = true
+    main = 'call'
+}
+
+task run(type: NodeTask) {
+    script = file("$buildDir/index.js")
+}
+
+task rollup(type: NodeTask, dependsOn: compileKotlin2Js) {
+    script = file("$buildDir/node_modules/rollup/bin/rollup")
+    workingDir = buildDir
+    args = ['-c', 'rollup.config.js']
+}
+
+rollup.dependsOn(npm_install).doFirst {
+    copy {
+        from('package.json', 'rollup.config.js')
+        into buildDir
+    }
+}

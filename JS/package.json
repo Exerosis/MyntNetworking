@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "kotlin": "^1.2.71",
+    "turbo-net": "latest"
+  },
+  "devDependencies": {
+    "rollup": "latest",
+    "rollup-plugin-commonjs": "latest",
+    "rollup-plugin-node-resolve": "^3.4.0"
+  }
+}

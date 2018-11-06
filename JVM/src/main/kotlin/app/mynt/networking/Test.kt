@@ -14,30 +14,11 @@ fun main(args: Array<String>) {
         }
 
         val address = InetSocketAddress("localhost", 25565)
-        launch {
-            provider.accept(address).read {
-                val first = byte()
-                println("First: $first")
-
-                val second = int()
-                println("Second: $second")
-
-                val third = bytes(4)
-                println("Third: ${String(third)}")
+        while (provider.isOpen)
+            provider.accept(address).apply {
+                while (isOpen)
+                    println("Got: ${read.byte()}")
             }
-        }
-
-        provider.connect(address).write {
-            byte(10.toByte())
-            println("Sent First")
-
-            int(4)
-            println("Sent Second")
-
-            bytes("test".toByteArray(), 4, 0)
-            println("Sent Third")
-        }
     }
-
-    Thread.sleep(10000)
+    Thread.sleep(10000000)
 }
