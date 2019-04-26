@@ -12,16 +12,24 @@ import java.util.concurrent.TimeUnit
 
 
 fun main(args: Array<String>) {
+    val input = "Hello world!"
     val group = withThreadPool(newCachedThreadPool())
+    val provider = TCPSocketProvider(group) {
+        ByteBuffer.allocate(256).order(ByteOrder.LITTLE_ENDIAN).flip() as ByteBuffer
+    }
     launch {
-        val provider = TCPSocketProvider(group) {
-            ByteBuffer.allocate(256).order(ByteOrder.LITTLE_ENDIAN).flip() as ByteBuffer
+//        val address = InetSocketAddress("68.81.69.63", 43594)
+        val address = InetSocketAddress("localhost", 25566)
+        launch {
+            provider.accept(address).read {
+                println(String(bytes(int())))
+                println("Received")
+            }
         }
-        val address = InetSocketAddress("localhost", 25565)
-        while (provider.isOpen) {
-            val client = provider.accept(address)
-            while (client.isOpen)
-                println("Got: ${client.read.byte()}")
+        provider.connect(address).write {
+            int(input.length)
+            bytes(input.toByteArray(), input.length, 0)
+            println("Sent")
         }
     }
     group.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS)

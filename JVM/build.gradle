@@ -8,9 +8,9 @@ dependencies {
     expectedBy parent
 }
 
-//jar {
-//    archiveName = "${project.name}.jar"
-//    destinationDir = file("$parent.rootDir/Testing")
-//    manifest.attributes('Main-Class' : 'app.mynt.networking.TestKt')
-//    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-//}
+jar {
+    archiveName = "${project.name}.jar"
+    destinationDir = file("$parent.rootDir/Testing")
+    manifest.attributes('Main-Class' : 'app.mynt.networking.TestKt')
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
